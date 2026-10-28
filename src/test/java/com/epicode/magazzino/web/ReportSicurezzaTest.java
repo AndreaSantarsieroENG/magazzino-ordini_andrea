@@ -57,6 +57,13 @@ class ReportSicurezzaTest {
     }
 
     @Test
+    void downloadConsenteUnReportPresenteNellaDirectory() throws Exception {
+        mvc.perform(get("/report/file").param("nome", "ordini-ottobre.csv"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Ferramenta Bianchi")));
+    }
+
+    @Test
     void intestazioneSostituisceSoloIlSegnapostoDataPrevisto() throws Exception {
         mvc.perform(get("/report/intestazione").param("modello", "Report del ${date:dd/MM/yyyy}"))
                 .andExpect(status().isOk())

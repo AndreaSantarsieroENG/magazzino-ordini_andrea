@@ -1,16 +1,16 @@
 package com.epicode.magazzino.web;
 
 import java.io.IOException;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +43,7 @@ public class ReportController {
     /** Scarica un report già generato: /report/file?nome=ordini-ottobre.csv */
     @GetMapping("/file")
     @ResponseBody
-    public byte[] file(@RequestParam String nome) throws IOException {
+    public byte[] file(@RequestParam String nome) {
         try {
             Path directory = Path.of("report").toRealPath();
             Path file = directory.resolve(nome).normalize();
