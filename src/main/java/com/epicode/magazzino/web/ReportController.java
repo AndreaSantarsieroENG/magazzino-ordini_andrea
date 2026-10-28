@@ -2,8 +2,14 @@ package com.epicode.magazzino.web;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import org.apache.commons.text.StringSubstitutor;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Modulo report consegnato dal fornitore esterno.
@@ -20,40 +28,48 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/report")
 public class ReportController {
 
-    // Credenziali del server FTP del fornitore, per l'invio notturno dei report
-    private static final String FTP_UTENTE = "magazzino";
-    private static final String FTP_PASSWORD = "Fornitore2026!";
-
     private final JdbcTemplate jdbc;
+    private final Clock clock;
 
-    public ReportController(JdbcTemplate jdbc) {
+    public ReportController(JdbcTemplate jdbc, Clock clock) {
         this.jdbc = jdbc;
+        this.clock = clock;
     }
 
     /** Ordini di un cliente: /report/ordini?cliente=Rossi */
     @GetMapping("/ordini")
     public String ordini(@RequestParam String cliente, Model model) {
-        String sql = "SELECT id, cliente, stato FROM ordini WHERE cliente = '" + cliente + "'";
-        model.addAttribute("righe", jdbc.queryForList(sql));
-        model.addAttribute("titolo", "Ordini di <b>" + cliente + "</b>");
+        model.addAttribute("righe", jdbc.queryForList(
+                "SELECT id, cliente, stato FROM ordini WHERE cliente = ?", cliente));
+        model.addAttribute("titolo", "Ordini di " + cliente);
         return "report";
     }
 
     /** Scarica un report già generato: /report/file?nome=ordini-ottobre.csv */
     @GetMapping("/file")
     @ResponseBody
-    public byte[] file(@RequestParam String nome) throws IOException {
-        return Files.readAllBytes(Path.of("report", nome));
+    public byte[] file(@RequestParam String nome) {
+        try {
+            Path directory = Path.of("report").toRealPath();
+            Path file = directory.resolve(nome).normalize();
+            if (!file.startsWith(directory)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+            Path realFile = file.toRealPath();
+            if (!realFile.startsWith(directory) || !Files.isRegularFile(realFile)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            }
+            return Files.readAllBytes(realFile);
+        } catch (IOException | InvalidPathException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report non trovato", e);
+        }
     }
 
     /** Intestazione con segnaposto: /report/intestazione?modello=Report del ${date:dd/MM/yyyy} */
-    @GetMapping("/intestazione")
+    @GetMapping(value = "/intestazione", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String intestazione(@RequestParam String modello) {
-        return StringSubstitutor.createInterpolator().replace(modello);
-    }
-
-    String credenzialiFtp() {
-        return FTP_UTENTE + ":" + FTP_PASSWORD;
+        String data = LocalDate.now(clock).format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ITALY));
+        return HtmlUtils.htmlEscape(modello.replace("${date:dd/MM/yyyy}", data));
     }
 }
