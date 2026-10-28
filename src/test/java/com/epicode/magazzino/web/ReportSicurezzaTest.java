@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,13 +65,19 @@ class ReportSicurezzaTest {
     }
 
     @Test
-    void intestazioneSostituisceSoloIlSegnapostoDataPrevisto() throws Exception {
+    void intestazioneSostituisceSoloIlSegnapostoDataPrevistoEScapaHtml() throws Exception {
         mvc.perform(get("/report/intestazione").param("modello", "Report del ${date:dd/MM/yyyy}"))
                 .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string(matchesPattern("Report del \\d{2}/\\d{2}/\\d{4}")));
 
         mvc.perform(get("/report/intestazione").param("modello", "${env:PATH}"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("${env:PATH}"));
+
+        mvc.perform(get("/report/intestazione").param("modello", "<script>alert(1)</script>"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("&lt;script&gt;alert(1)&lt;/script&gt;")))
+                .andExpect(content().string(not(containsString("<script>"))));
     }
 }

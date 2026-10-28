@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Modulo report consegnato dal fornitore esterno.
@@ -61,10 +63,10 @@ public class ReportController {
     }
 
     /** Intestazione con segnaposto: /report/intestazione?modello=Report del ${date:dd/MM/yyyy} */
-    @GetMapping("/intestazione")
+    @GetMapping(value = "/intestazione", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String intestazione(@RequestParam String modello) {
         String data = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.ITALY));
-        return modello.replace("${date:dd/MM/yyyy}", data);
+        return HtmlUtils.htmlEscape(modello.replace("${date:dd/MM/yyyy}", data));
     }
 }
