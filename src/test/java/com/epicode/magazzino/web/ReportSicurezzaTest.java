@@ -1,7 +1,6 @@
 package com.epicode.magazzino.web;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -9,11 +8,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.epicode.magazzino.service.NuovoOrdine;
 import com.epicode.magazzino.service.OrdineService;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@Import(ReportSicurezzaTest.OrologioFisso.class)
 class ReportSicurezzaTest {
 
     @Autowired
@@ -69,7 +76,7 @@ class ReportSicurezzaTest {
         mvc.perform(get("/report/intestazione").param("modello", "Report del ${date:dd/MM/yyyy}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-                .andExpect(content().string(matchesPattern("Report del \\d{2}/\\d{2}/\\d{4}")));
+                .andExpect(content().string("Report del 01/02/2025"));
 
         mvc.perform(get("/report/intestazione").param("modello", "${env:PATH}"))
                 .andExpect(status().isOk())
@@ -79,5 +86,15 @@ class ReportSicurezzaTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("&lt;script&gt;alert(1)&lt;/script&gt;")))
                 .andExpect(content().string(not(containsString("<script>"))));
+    }
+
+    @TestConfiguration(proxyBeanMethods = false)
+    static class OrologioFisso {
+
+        @Bean
+        @Primary
+        Clock clockFisso() {
+            return Clock.fixed(Instant.parse("2025-02-01T10:00:00Z"), ZoneOffset.UTC);
+        }
     }
 }
