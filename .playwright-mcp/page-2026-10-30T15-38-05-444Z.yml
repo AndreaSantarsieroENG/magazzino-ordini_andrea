@@ -1,0 +1,77 @@
+- generic [active] [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e3]: Magazzino & Ordini
+    - navigation [ref=f5e4]:
+      - link "Prodotti" [ref=f5e5] [cursor=pointer]:
+        - /url: /prodotti
+      - link "Ordini" [ref=f5e6] [cursor=pointer]:
+        - /url: /ordini
+      - link "Nuovo ordine" [ref=f5e7] [cursor=pointer]:
+        - /url: /ordini/nuovo
+  - main [ref=f5e8]:
+    - heading "Prodotti" [level=1] [ref=f5e9]
+    - table [ref=f5e10]:
+      - rowgroup [ref=f5e11]:
+        - row [ref=f5e12]:
+          - columnheader "Codice" [ref=f5e13]
+          - columnheader "Nome" [ref=f5e14]
+          - columnheader "Prezzo" [ref=f5e15]
+          - columnheader "Disponibili" [ref=f5e16]
+          - columnheader "Scorta minima" [ref=f5e17]
+      - rowgroup [ref=f5e18]:
+        - row [ref=f5e19]:
+          - cell [ref=f5e20]:
+            - code [ref=f5e21]: CAC-PH2
+          - cell "Cacciavite a croce PH2" [ref=f5e22]
+          - cell "4,10 €" [ref=f5e23]
+          - cell "18" [ref=f5e24]
+          - cell "20" [ref=f5e25]
+        - row [ref=f5e26]:
+          - cell [ref=f5e27]:
+            - code [ref=f5e28]: COL-1KG
+          - cell "Colla vinilica 1 kg" [ref=f5e29]
+          - cell "5,60 €" [ref=f5e30]
+          - cell "75" [ref=f5e31]
+          - cell "25" [ref=f5e32]
+        - row [ref=f5e33]:
+          - cell [ref=f5e34]:
+            - code [ref=f5e35]: GUA-L
+          - cell "Guanti da lavoro taglia L" [ref=f5e36]
+          - cell "3,20 €" [ref=f5e37]
+          - cell "150" [ref=f5e38]
+          - cell "30" [ref=f5e39]
+        - row [ref=f5e40]:
+          - cell [ref=f5e41]:
+            - code [ref=f5e42]: MET-5
+          - cell "Metro a nastro 5 m" [ref=f5e43]
+          - cell "8,90 €" [ref=f5e44]
+          - cell "60" [ref=f5e45]
+          - cell "15" [ref=f5e46]
+        - row [ref=f5e47]:
+          - cell [ref=f5e48]:
+            - code [ref=f5e49]: NAS-50
+          - cell "Nastro americano 50 m" [ref=f5e50]
+          - cell "7,40 €" [ref=f5e51]
+          - cell "0" [ref=f5e52]
+          - cell "10" [ref=f5e53]
+        - row [ref=f5e54]:
+          - cell [ref=f5e55]:
+            - code [ref=f5e56]: TAS-8
+          - cell "Tasselli 8 mm (conf. 50)" [ref=f5e57]
+          - cell "4,50 €" [ref=f5e58]
+          - cell "35" [ref=f5e59]
+          - cell "40" [ref=f5e60]
+        - row [ref=f5e61]:
+          - cell [ref=f5e62]:
+            - code [ref=f5e63]: TRA-18V
+          - cell "Trapano a batteria 18V" [ref=f5e64]
+          - cell "89,00 €" [ref=f5e65]
+          - cell "12" [ref=f5e66]
+          - cell "5" [ref=f5e67]
+        - row [ref=f5e68]:
+          - cell [ref=f5e69]:
+            - code [ref=f5e70]: VIT-M6-30
+          - cell "Viti M6x30 (conf. 100)" [ref=f5e71]
+          - cell "6,90 €" [ref=f5e72]
+          - cell "240" [ref=f5e73]
+          - cell "50" [ref=f5e74]

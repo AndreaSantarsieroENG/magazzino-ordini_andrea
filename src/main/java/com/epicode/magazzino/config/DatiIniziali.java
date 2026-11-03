@@ -29,5 +29,6 @@ public class DatiIniziali implements CommandLineRunner {
         prodotti.save(new Prodotto("MET-5", "Metro a nastro 5 m", new BigDecimal("8.90"), 60, 15));
         prodotti.save(new Prodotto("CAC-PH2", "Cacciavite a croce PH2", new BigDecimal("4.10"), 18, 20));
         prodotti.save(new Prodotto("COL-1KG", "Colla vinilica 1 kg", new BigDecimal("5.60"), 75, 25));
+        
     }
 }

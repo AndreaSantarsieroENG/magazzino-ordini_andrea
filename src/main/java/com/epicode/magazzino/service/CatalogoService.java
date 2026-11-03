@@ -33,4 +33,10 @@ public class CatalogoService {
         prodotto.riassortisci(quantita);
         return prodotto;
     }
+
+    public Prodotto crea(String codice, String nome, java.math.BigDecimal prezzo,
+                         int disponibili, int scortaMinima) {
+        Prodotto prodotto = new Prodotto(codice, nome, prezzo, disponibili, scortaMinima);
+        return prodotti.save(prodotto);
+    }
 }
